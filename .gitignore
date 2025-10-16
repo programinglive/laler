@@ -1,0 +1,24 @@
+# Dependencies
+/vendor/
+composer.lock
+
+# Node
+/node_modules/
+
+# Environment
+.env
+.env.*
+
+# IDE & OS
+/.idea/
+/.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Testing & Reports
+.phpunit.result.cache
+/coverage/
+/build/
+/reports/
+*.log

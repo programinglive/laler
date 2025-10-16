@@ -1,0 +1,42 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "laler/laler",
+    "description": "Capture Laravel dumps and route them to configurable channels.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "dump",
+        "debug",
+        "debugging"
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/contracts": "^9.0|^10.0|^11.0|^12.0",
+        "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
+        "symfony/var-dumper": "^6.0|^7.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
+        "phpunit/phpunit": "^9.5|^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laler\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Laler\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Laler\\LalerServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
