@@ -2,6 +2,24 @@
 
 Capture PHP `VarDumper` output and redirect it to any channel you control. Works with or without Laravel.
 
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Windows Desktop App](#windows-desktop-app)
+- [Integration Guides](#integration-guides)
+  - [Plain PHP](#plain-php)
+  - [Laravel](#laravel)
+- [Usage Examples](#usage-examples)
+  - [Laravel Usage](#laravel-usage)
+  - [Plain PHP Usage](#plain-php-usage)
+  - [Desktop App Integration](#desktop-app-integration)
+- [Testing](#testing)
+- [Release Process](#release-process)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Quick Start
 
 1. **Install the library:** `composer require laler/laler`
@@ -47,16 +65,22 @@ For a visual interface to view your laler() dumps, install the Windows desktop a
 ## Integration Guides
 
 ### Plain PHP
-- **Boot autoloader** `require 'vendor/autoload.php';`
-- **Configure dumpers (optional)** `laler_manager()->register(new CliDumper());`
-- **Send values** `laler($value, $moreValues);`
+- **Boot autoloader:** `require 'vendor/autoload.php';`
+- **Get manager:** `$manager = laler_manager();`
+- **Register dumpers:** `$manager->register(new TauriDumper('http://localhost:3000'));`
+- **Send values:** `laler($data);`
 
 > **Note:** In plain PHP projects, the vendor directory is typically at your project root, so use `__DIR__ . '/vendor/autoload.php'`. In Laravel projects within subdirectories, you might need `__DIR__ . '/../vendor/autoload.php'` depending on your file location.
 
 ```php
 require __DIR__.'/vendor/autoload.php';
 
-laler('Ready to capture without Laravel!');
+use Laler\Dumpers\TauriDumper;
+
+$manager = laler_manager();
+$manager->register(new TauriDumper('http://localhost:3000'));
+
+laler(['data' => ['nested' => 'structure']]);
 ```
 
 ### Laravel
@@ -73,9 +97,9 @@ public function boot(): void
 }
 ```
 
-- **Use helper** call `laler()` anywhere to route values through configured dumpers.
+- **Use helper:** call `laler()` anywhere to route values through configured dumpers.
 
-## Usage
+## Usage Examples
 
 ### Laravel Usage
 `DumpCaptureManager` centralises dump collection and forwards each value to your registered dumpers. Retrieve it from the container and register any `DataDumperInterface` implementation:
@@ -91,63 +115,57 @@ laler('Hello from Laler!'); // Routed to the CLI dumper
 ```
 
 ### Plain PHP Usage
-For projects without Laravel, use the global helper functions:
+For projects without Laravel, use the global helper functions. Here's the complete example from `examples/plain_php_usage.php`:
 
 ```php
-use Laler\DumpCaptureManager;
-use Symfony\Component\VarDumper\Dumper\CliDumper;
+<?php
 
-// Method 1: Simple usage (auto-creates manager)
-laler('Hello from plain PHP!');
-laler(['key' => 'value']);
+declare(strict_types=1);
 
-// Method 2: Configure dumpers using helper
-$manager = laler_manager();
-$manager->register(new CliDumper());
-laler('Now routed through CLI dumper');
+// Optional: Add custom helper functions
+if (!function_exists('now')) {
+    class LalerPlainPhpNow extends \DateTimeImmutable
+    {
+        public function toISOString(): string
+        {
+            return $this->format(DATE_ATOM);
+        }
+    }
 
-// Method 3: Manual manager creation
-$manager = new DumpCaptureManager();
-$manager->register(new CliDumper());
-$manager->dump('Direct usage');
-```
+    function now(): LalerPlainPhpNow
+    {
+        return new LalerPlainPhpNow();
+    }
+}
 
-Add extra context to every dump by registering `ContextProviderInterface` implementations:
+require_once __DIR__ . '/vendor/autoload.php';
 
-```php
-use Symfony\Component\VarDumper\Dumper\ContextProvider\RequestContextProvider;
-
-$manager->addContextProvider('request', new RequestContextProvider());
-```
-
-Once at least one dumper is registered, call the `laler()` helper to send values through your configured pipeline.
-
-Use the global helper wherever you need to forward values:
-
-```php
-laler('first value', ['second' => 'value']);
-```
-
-This clones each argument and sends it through the same registered dumpers and context providers as Laravel's native dumper.
-
-### Example integrations
-
-You can forward dumps to any channel you control by registering the appropriate dumper. For example, the included `TauriDumper` streams values to the Windows desktop app:
-
-```php
-use Laler\DumpCaptureManager;
 use Laler\Dumpers\TauriDumper;
 
-// For Laravel projects
-$manager = app(DumpCaptureManager::class);
+$manager = laler_manager();
 $manager->register(new TauriDumper('http://localhost:3000'));
 
-laler('Hello from Laravel!');
+// Dumps now show in the desktop app
+laler(['data' => ['nested' => 'structure']]);
 ```
 
-This will send your dumps directly to the Windows desktop app for visual debugging.
+### Desktop App Integration
 
-See `examples/plain_php_usage.php` for a complete plain PHP usage example, including Tauri integration helpers.
+To send dumps to the Windows desktop app, use the `TauriDumper`:
+
+```php
+use Laler\Dumpers\TauriDumper;
+
+// Get the global manager and register the desktop app dumper
+$manager = laler_manager();
+$manager->register(new TauriDumper('http://localhost:3000'));
+
+// Now all laler() calls will appear in the desktop app
+laler('Debug message');
+laler(['user_data' => $userData]);
+```
+
+> **Tip:** Start the desktop app first, then run your PHP code to see dumps in real-time.
 
 ## Testing
 ```bash
