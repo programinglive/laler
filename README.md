@@ -36,6 +36,14 @@ $manager->addContextProvider('request', new RequestContextProvider());
 
 Once at least one dumper is registered, the manager swaps Laravel's default `VarDumper` handler so all subsequent `dump()` calls flow through your configured pipeline.
 
+When you want to forward values without calling `dump()`, use the global helper:
+
+```php
+laler('first value', ['second' => 'value']);
+```
+
+This clones each argument and sends it through the same registered dumpers and context providers as Laravel's native dumper.
+
 ## Testing
 ```bash
 vendor/bin/phpunit --stop-on-failure
