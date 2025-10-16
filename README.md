@@ -4,8 +4,8 @@ Capture Laravel `VarDumper` output and redirect it to any channel you control.
 
 ## Requirements
 - PHP ^8.0
-- Laravel (Illuminate components) ^9.0  ^12.0
-- Symfony VarDumper ^6.0 or ^7.0
+- Laravel (Illuminate components) ^9.0 || ^12.0
+- Symfony VarDumper ^6.0 || ^7.0
 
 ## Installation
 ```bash
@@ -43,6 +43,22 @@ laler('first value', ['second' => 'value']);
 ```
 
 This clones each argument and sends it through the same registered dumpers and context providers as Laravel's native dumper.
+
+### Browser console output
+
+The package automatically registers a browser console dumper. After installation you can call `laler()` (or `dump()`) anywhere in your web request lifecycle—such as inside a route:
+
+```php
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    laler('Hello World');
+
+    return view('welcome');
+});
+```
+
+When the response is HTML, a small script is injected just before `</body>` and every message is forwarded to `console.log` in your browser's developer tools.
 
 ## Testing
 ```bash

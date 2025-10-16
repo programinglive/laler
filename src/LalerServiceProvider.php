@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Laler;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Support\ServiceProvider;
+use Laler\Dumpers\BrowserConsoleDumper;
+use Laler\Http\Middleware\InjectBrowserConsoleLogs;
+use Laler\Support\BrowserConsoleRecorder;
 
 class LalerServiceProvider extends ServiceProvider
 {
@@ -14,8 +18,21 @@ class LalerServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(BrowserConsoleRecorder::class);
+
+        $this->app->singleton(BrowserConsoleDumper::class, static function (Application $app) {
+            return new BrowserConsoleDumper($app->make(BrowserConsoleRecorder::class));
+        });
+
+        $this->app->singleton(InjectBrowserConsoleLogs::class, static function (Application $app) {
+            return new InjectBrowserConsoleLogs($app->make(BrowserConsoleRecorder::class));
+        });
+
         $this->app->singleton(DumpCaptureManager::class, static function (Application $app) {
-            return new DumpCaptureManager($app);
+            $manager = new DumpCaptureManager($app);
+            $manager->register($app->make(BrowserConsoleDumper::class));
+
+            return $manager;
         });
     }
 
@@ -24,6 +41,11 @@ class LalerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Future: publish config, setup dump handlers, etc.
+        /** @var HttpKernelContract $kernel */
+        $kernel = $this->app->make(HttpKernelContract::class);
+
+        if (method_exists($kernel, 'pushMiddleware')) {
+            $kernel->pushMiddleware(InjectBrowserConsoleLogs::class);
+        }
     }
 }
