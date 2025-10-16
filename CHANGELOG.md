@@ -1,9 +1,13 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### [1.0.2](https://github.com/programinglive/laler/compare/v1.0.1...v1.0.2) (2025-10-16)
+
+
+### Documentation
+
+* clarify vendor path differences and simplify plain PHP example ([b499d61](https://github.com/programinglive/laler/commit/b499d61ff2e9bb57a0080c2f4f1035553d612369))
 
 ## [1.0.1] - 2025-10-17
 - Added plain PHP support with automatic fallback when Laravel is unavailable.

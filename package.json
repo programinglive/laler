@@ -1,6 +1,6 @@
 {
   "name": "laler",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Capture PHP dumps and route them to configurable channels. Works with or without Laravel.",
   "scripts": {
     "release": "standard-version",
