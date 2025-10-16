@@ -2,6 +2,13 @@
 
 Capture PHP `VarDumper` output and redirect it to any channel you control. Works with or without Laravel.
 
+## Quick Start
+
+1. **Install the library:** `composer require laler/laler`
+2. **Install Windows desktop app** (optional): Download and run `installer/lalerapp_0.1.0_x64_en-US.msi` as Administrator
+3. **Start debugging:** Use `laler('Your debug data')` in your PHP code
+4. **View results** in the desktop app or console
+
 ## Requirements
 - PHP ^8.0
 - Symfony VarDumper ^6.0 || ^7.0
@@ -19,6 +26,23 @@ composer install
 **For Laravel projects:** The package is auto-discovered, so no manual provider registration is required.
 
 **For plain PHP projects:** Include the Composer autoloader and call the `laler()` helper.
+
+## Windows Desktop App
+
+For a visual interface to view your laler() dumps, install the Windows desktop application:
+
+### Installation
+1. **Download** the installer: `installer/lalerapp_0.1.0_x64_en-US.msi`
+2. **Right-click** → **"Run as Administrator"** (required for system-level HTTP server setup)
+3. **Follow** the installation wizard
+4. **Launch** the Laler app from Start Menu or Desktop shortcut
+
+### Usage
+1. **Start the desktop app** first
+2. **Configure your laler() calls** to send dumps to the app (see TauriDumper examples below)
+3. **View dumps** in real-time through the desktop interface
+
+> **Note:** The desktop app provides a user-friendly interface for debugging and monitoring your PHP application dumps without cluttering your console or logs.
 
 ## Integration Guides
 
@@ -108,17 +132,20 @@ This clones each argument and sends it through the same registered dumpers and c
 
 ### Example integrations
 
-You can forward dumps to any channel you control by registering the appropriate dumper. For example, the included `TauriDumper` streams values to a Tauri desktop app API endpoint:
+You can forward dumps to any channel you control by registering the appropriate dumper. For example, the included `TauriDumper` streams values to the Windows desktop app:
 
 ```php
 use Laler\DumpCaptureManager;
 use Laler\Dumpers\TauriDumper;
 
+// For Laravel projects
 $manager = app(DumpCaptureManager::class);
 $manager->register(new TauriDumper('http://localhost:3000'));
 
 laler('Hello from Laravel!');
 ```
+
+This will send your dumps directly to the Windows desktop app for visual debugging.
 
 See `examples/plain_php_usage.php` for a complete plain PHP usage example, including Tauri integration helpers.
 
