@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Laler;
 
-use Illuminate\Contracts\Foundation\Application;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\ContextProvider\ContextProviderInterface;
 use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\VarDumper\VarDumper;
 
 final class DumpCaptureManager
 {
-    private Application $app;
+    private ?ContainerInterface $container;
 
     /** @var array<int, DataDumperInterface> */
     private array $dumpers = [];
@@ -24,9 +24,9 @@ final class DumpCaptureManager
 
     private VarCloner $cloner;
 
-    public function __construct(Application $app)
+    public function __construct(?ContainerInterface $container = null)
     {
-        $this->app = $app;
+        $this->container = $container;
         $this->cloner = new VarCloner();
     }
 
