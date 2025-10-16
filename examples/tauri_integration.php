@@ -11,10 +11,10 @@ $manager = new DumpCaptureManager(app());
 // Register the TauriDumper
 $manager->register(new TauriDumper('http://localhost:3000'));
 
-// Now all dump() calls will be sent to your Tauri app!
-dump('Hello from Laravel!');
-dump(['user' => 'John', 'email' => 'john@example.com']);
-dump((object) ['status' => 'success', 'data' => [1, 2, 3, 4, 5]]);
+// Now all laler() calls will be sent to your Tauri app!
+laler('Hello from Laravel!');
+laler(['user' => 'John', 'email' => 'john@example.com']);
+laler((object) ['status' => 'success', 'data' => [1, 2, 3, 4, 5]]);
 
 // You can also use the laler() helper function
 laler('This is a debug message', time());

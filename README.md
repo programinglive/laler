@@ -1,19 +1,57 @@
 # Laler
 
-Capture Laravel `VarDumper` output and redirect it to any channel you control.
+Capture PHP `VarDumper` output and redirect it to any channel you control. Works with or without Laravel.
 
 ## Requirements
 - PHP ^8.0
-- Laravel (Illuminate components) ^9.0 || ^12.0
 - Symfony VarDumper ^6.0 || ^7.0
+- PSR-11 Container Interface ^1.0 || ^2.0
+
+**Optional (for Laravel integration):**
+- Laravel (Illuminate components) ^9.0 || ^12.0
 
 ## Installation
 ```bash
 composer require laler/laler
+composer install
 ```
-The package is auto-discovered by Laravel, so no manual provider registration is required.
+
+**For Laravel projects:** The package is auto-discovered, so no manual provider registration is required.
+
+**For plain PHP projects:** Include the Composer autoloader and call the `laler()` helper.
+
+## Integration Guides
+
+### Plain PHP
+- **Boot autoloader** `require 'vendor/autoload.php';`
+- **Configure dumpers (optional)** `laler_manager()->register(new CliDumper());`
+- **Send values** `laler($value, $moreValues);`
+
+```php
+require __DIR__.'/vendor/autoload.php';
+
+laler('Ready to capture without Laravel!');
+```
+
+### Laravel
+- **Install** `composer require laler/laler`
+- **Register dumpers** (for example, in a service provider)
+
+```php
+use Laler\DumpCaptureManager;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
+
+public function boot(): void
+{
+    app(DumpCaptureManager::class)->register(new CliDumper());
+}
+```
+
+- **Use helper** call `laler()` anywhere to route values through configured dumpers.
 
 ## Usage
+
+### Laravel Usage
 `DumpCaptureManager` centralises dump collection and forwards each value to your registered dumpers. Retrieve it from the container and register any `DataDumperInterface` implementation:
 
 ```php
@@ -23,7 +61,29 @@ use Symfony\Component\VarDumper\Dumper\CliDumper;
 $manager = app(DumpCaptureManager::class);
 $manager->register(new CliDumper());
 
-dump('Hello from Laler!'); // Routed to the CLI dumper
+laler('Hello from Laler!'); // Routed to the CLI dumper
+```
+
+### Plain PHP Usage
+For projects without Laravel, use the global helper functions:
+
+```php
+use Laler\DumpCaptureManager;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
+
+// Method 1: Simple usage (auto-creates manager)
+laler('Hello from plain PHP!');
+laler(['key' => 'value']);
+
+// Method 2: Configure dumpers using helper
+$manager = laler_manager();
+$manager->register(new CliDumper());
+laler('Now routed through CLI dumper');
+
+// Method 3: Manual manager creation
+$manager = new DumpCaptureManager();
+$manager->register(new CliDumper());
+$manager->dump('Direct usage');
 ```
 
 Add extra context to every dump by registering `ContextProviderInterface` implementations:
@@ -34,9 +94,9 @@ use Symfony\Component\VarDumper\Dumper\ContextProvider\RequestContextProvider;
 $manager->addContextProvider('request', new RequestContextProvider());
 ```
 
-Once at least one dumper is registered, the manager swaps Laravel's default `VarDumper` handler so all subsequent `dump()` calls flow through your configured pipeline.
+Once at least one dumper is registered, call the `laler()` helper to send values through your configured pipeline.
 
-When you want to forward values without calling `dump()`, use the global helper:
+Use the global helper wherever you need to forward values:
 
 ```php
 laler('first value', ['second' => 'value']);
@@ -55,10 +115,10 @@ use Laler\Dumpers\TauriDumper;
 $manager = app(DumpCaptureManager::class);
 $manager->register(new TauriDumper('http://localhost:3000'));
 
-dump('Hello from Laravel!');
+laler('Hello from Laravel!');
 ```
 
-See `examples/tauri_integration.php` for a complete walkthrough, including context providers and helper usage.
+See `examples/tauri_integration.php` for Laravel integration and `examples/plain_php_usage.php` for plain PHP usage examples.
 
 ## Testing
 ```bash
