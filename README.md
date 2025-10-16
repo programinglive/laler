@@ -127,10 +127,26 @@ See `examples/plain_php_usage.php` for a complete plain PHP usage example, inclu
 vendor/bin/phpunit --stop-on-failure
 ```
 
+## Release Process
+```bash
+# Install npm dependencies for release tooling
+npm install
+
+# Create a new release (automatically determines version bump)
+npm run release
+
+# Or specify version bump type
+npm run release:patch   # 1.0.1 -> 1.0.2
+npm run release:minor   # 1.0.1 -> 1.1.0
+npm run release:major   # 1.0.1 -> 2.0.0
+```
+
 ## Contributing
+- **Commit format:** Use conventional commits (`feat:`, `fix:`, `docs:`, etc.)
+- **Interactive commits:** Run `npm run commit` for guided commit creation
 - Follow the existing code style
 - Remove unused imports before committing
-- Avoid using the `any` type in TypeScript contributions
+- Run tests before submitting
 
 ## License
 MIT

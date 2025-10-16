@@ -1,0 +1,16 @@
+{
+  "types": [
+    {"type": "feat", "section": "Features"},
+    {"type": "fix", "section": "Bug Fixes"},
+    {"type": "docs", "section": "Documentation"},
+    {"type": "chore", "hidden": true},
+    {"type": "style", "hidden": true},
+    {"type": "refactor", "section": "Code Refactoring"},
+    {"type": "perf", "section": "Performance Improvements"},
+    {"type": "test", "hidden": true}
+  ],
+  "commitUrlFormat": "https://github.com/programinglive/laler/commit/{{hash}}",
+  "compareUrlFormat": "https://github.com/programinglive/laler/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "https://github.com/programinglive/laler/issues/{{id}}",
+  "userUrlFormat": "https://github.com/{{user}}"
+}

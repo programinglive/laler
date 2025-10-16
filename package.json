@@ -1,0 +1,43 @@
+{
+  "name": "laler",
+  "version": "1.0.1",
+  "description": "Capture PHP dumps and route them to configurable channels. Works with or without Laravel.",
+  "scripts": {
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:patch": "standard-version --release-as patch",
+    "commit": "git-cz"
+  },
+  "devDependencies": {
+    "standard-version": "^9.5.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "husky": "^8.0.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "standard-version": {
+    "scripts": {
+      "postchangelog": "git add CHANGELOG.md"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/programinglive/laler.git"
+  },
+  "keywords": [
+    "php",
+    "laravel",
+    "dump",
+    "debug",
+    "debugging"
+  ],
+  "author": "programinglive",
+  "license": "MIT"
+}
