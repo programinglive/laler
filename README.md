@@ -44,21 +44,21 @@ laler('first value', ['second' => 'value']);
 
 This clones each argument and sends it through the same registered dumpers and context providers as Laravel's native dumper.
 
-### Browser console output
+### Example integrations
 
-The package automatically registers a browser console dumper. After installation you can call `laler()` (or `dump()`) anywhere in your web request lifecycle—such as inside a route:
+You can forward dumps to any channel you control by registering the appropriate dumper. For example, the included `TauriDumper` streams values to a Tauri desktop app API endpoint:
 
 ```php
-use Illuminate\Support\Facades\Route;
+use Laler\DumpCaptureManager;
+use Laler\Dumpers\TauriDumper;
 
-Route::get('/', function () {
-    laler('Hello World');
+$manager = app(DumpCaptureManager::class);
+$manager->register(new TauriDumper('http://localhost:3000'));
 
-    return view('welcome');
-});
+dump('Hello from Laravel!');
 ```
 
-When the response is HTML, a small script is injected just before `</body>` and every message is forwarded to `console.log` in your browser's developer tools.
+See `examples/tauri_integration.php` for a complete walkthrough, including context providers and helper usage.
 
 ## Testing
 ```bash
