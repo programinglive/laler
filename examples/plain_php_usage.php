@@ -1,27 +1,28 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+declare(strict_types=1);
 
-use Laler\DumpCaptureManager;
-use Symfony\Component\VarDumper\Dumper\CliDumper;
+if (!function_exists('now')) {
+    class LalerPlainPhpNow extends \DateTimeImmutable
+    {
+        public function toISOString(): string
+        {
+            return $this->format(DATE_ATOM);
+        }
+    }
 
-// Method 1: Using the global helper (simplest)
-// The laler() function will automatically create a manager if none exists
-laler('Hello from plain PHP!');
-laler(['key' => 'value', 'number' => 42]);
+    function now(): LalerPlainPhpNow
+    {
+        return new LalerPlainPhpNow();
+    }
+}
 
-// Method 2: Using the laler_manager() helper to configure dumpers
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Laler\Dumpers\TauriDumper;
+
 $manager = laler_manager();
-$manager->register(new CliDumper());
+$manager->register(new TauriDumper('http://localhost:3000'));
 
-laler('This will now go through the CLI dumper');
+// Dumps now show in the Tauri app
 laler(['data' => ['nested' => 'structure']]);
-
-// Method 3: Creating your own manager instance
-$customManager = new DumpCaptureManager();
-$customManager->register(new CliDumper());
-
-$customManager->dump('Direct manager usage');
-$customManager->dump((object) ['status' => 'success', 'timestamp' => time()]);
-
-echo "Plain PHP integration complete!\n";

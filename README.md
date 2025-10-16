@@ -27,6 +27,8 @@ composer install
 - **Configure dumpers (optional)** `laler_manager()->register(new CliDumper());`
 - **Send values** `laler($value, $moreValues);`
 
+> **Note:** In plain PHP projects, the vendor directory is typically at your project root, so use `__DIR__ . '/vendor/autoload.php'`. In Laravel projects within subdirectories, you might need `__DIR__ . '/../vendor/autoload.php'` depending on your file location.
+
 ```php
 require __DIR__.'/vendor/autoload.php';
 
@@ -118,7 +120,7 @@ $manager->register(new TauriDumper('http://localhost:3000'));
 laler('Hello from Laravel!');
 ```
 
-See `examples/tauri_integration.php` for Laravel integration and `examples/plain_php_usage.php` for plain PHP usage examples.
+See `examples/plain_php_usage.php` for a complete plain PHP usage example, including Tauri integration helpers.
 
 ## Testing
 ```bash
