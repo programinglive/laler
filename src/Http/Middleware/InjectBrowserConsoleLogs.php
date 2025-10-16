@@ -23,51 +23,9 @@ final class InjectBrowserConsoleLogs
             return $response;
         }
 
-        if (!$this->shouldInject($response)) {
-            $this->recorder->flush();
-
-            return $response;
-        }
-
-        $messages = $this->recorder->flush();
-
-        if ($messages === []) {
-            return $response;
-        }
-
-        $payload = json_encode($messages, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
-        if ($payload === false) {
-            return $response;
-        }
-
-        $script = '<script>(function(){const messages=' . $payload . ';messages.forEach(function(message){console.log(message);});})();</script>';
-
-        $content = $response->getContent();
-
-        if ($content === false) {
-            return $response;
-        }
-
-        if (str_contains($content, '</body>')) {
-            $content = str_replace('</body>', $script . '</body>', $content);
-        } else {
-            $content .= $script;
-        }
-
-        $response->setContent($content);
+        $this->recorder->flush();
 
         return $response;
     }
 
-    private function shouldInject(Response $response): bool
-    {
-        if ($response->isRedirection()) {
-            return false;
-        }
-
-        $contentType = $response->headers->get('Content-Type');
-
-        return $contentType !== null && str_contains($contentType, 'text/html');
-    }
 }

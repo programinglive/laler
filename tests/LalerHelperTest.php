@@ -79,19 +79,4 @@ final class LalerHelperTest extends TestCase
         self::assertStringContainsString('hello browser console', $messages[0]);
     }
 
-    public function test_middleware_injects_console_logs_into_html_responses(): void
-    {
-        $request = Request::create('/', 'GET');
-
-        $middleware = $this->app->make(InjectBrowserConsoleLogs::class);
-
-        $response = $middleware->handle($request, static function () {
-            laler('Hello World');
-
-            return response('<html><body>Welcome</body></html>', 200, ['Content-Type' => 'text/html']);
-        });
-
-        self::assertStringContainsString('console.log', $response->getContent());
-        self::assertStringContainsString('Hello World', $response->getContent());
-    }
 }
