@@ -43,6 +43,8 @@ composer install
 
 **For Laravel projects:** The package is auto-discovered, so no manual provider registration is required.
 
+To forward dumps to the desktop app during local development, add a `TauriDumper` registration inside your `App\Providers\AppServiceProvider` `boot()` method as shown below.
+
 **For plain PHP projects:** Include the Composer autoloader and call the `laler()` helper.
 
 ## Windows Desktop App
@@ -88,12 +90,22 @@ laler(['data' => ['nested' => 'structure']]);
 - **Register dumpers** (for example, in a service provider)
 
 ```php
-use Laler\DumpCaptureManager;
-use Symfony\Component\VarDumper\Dumper\CliDumper;
+namespace App\Providers;
 
-public function boot(): void
+use Illuminate\Support\ServiceProvider;
+use Laler\DumpCaptureManager;
+use Laler\Dumpers\TauriDumper;
+
+class AppServiceProvider extends ServiceProvider
 {
-    app(DumpCaptureManager::class)->register(new CliDumper());
+    public function boot(): void
+    {
+        if ($this->app->environment('local')) {
+
+            $manager = $this->app->make(DumpCaptureManager::class);
+            $manager->register(new TauriDumper('http://localhost:3000'));
+        }
+    }
 }
 ```
 
