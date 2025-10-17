@@ -77,7 +77,20 @@ For a visual interface to view your laler() dumps, install the Windows desktop a
 ```php
 require __DIR__.'/vendor/autoload.php';
 
+use DateTimeImmutable;
 use Laler\Dumpers\TauriDumper;
+
+if (! function_exists('now')) {
+    function now(): DateTimeImmutable
+    {
+        return new class extends DateTimeImmutable {
+            public function toISOString(): string
+            {
+                return $this->format(DATE_ATOM);
+            }
+        };
+    }
+}
 
 $manager = laler_manager();
 $manager->register(new TauriDumper('http://localhost:3000'));
@@ -118,12 +131,15 @@ class AppServiceProvider extends ServiceProvider
 
 ```php
 use Laler\DumpCaptureManager;
-use Symfony\Component\VarDumper\Dumper\CliDumper;
+use Laler\Dumpers\TauriDumper;
 
 $manager = app(DumpCaptureManager::class);
-$manager->register(new CliDumper());
 
-laler('Hello from Laler!'); // Routed to the CLI dumper
+if (app()->environment('local')) {
+    $manager->register(new TauriDumper('http://localhost:3000'));
+}
+
+laler('Hello from Laler!'); // Routed to the Tauri desktop app
 ```
 
 ### Plain PHP Usage
