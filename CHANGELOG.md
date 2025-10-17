@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.6](https://github.com/programinglive/laler/compare/v1.0.5...v1.0.6) (2025-10-17)
+
+
+### Documentation
+
+* document now helper for plain php tauri dumps ([b69dd52](https://github.com/programinglive/laler/commit/b69dd521e0e6abf3a814c1c0e1f6ff242326e162))
+
 ### [1.0.5](https://github.com/programinglive/laler/compare/v1.0.4...v1.0.5) (2025-10-17)
 
 
