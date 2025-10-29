@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Laler\Tests;
 
-use Illuminate\Http\Request;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Events\QueryExecuted;
 use Laler\DumpCaptureManager;
 use Laler\LalerServiceProvider;
 use Laler\Http\Middleware\InjectBrowserConsoleLogs;
@@ -21,6 +22,13 @@ final class LalerHelperTest extends TestCase
 
         $this->app['config']->set('app.key', 'base64:'.base64_encode('01234567890123456789012345678901'));
         $this->app['config']->set('app.cipher', 'AES-256-CBC');
+
+        $this->app['config']->set('database.default', 'sqlite');
+        $this->app['config']->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
 
     }
 
@@ -77,6 +85,47 @@ final class LalerHelperTest extends TestCase
 
         self::assertCount(1, $messages);
         self::assertStringContainsString('hello browser console', $messages[0]);
+    }
+
+    public function test_query_watcher_forwards_queries_to_manager(): void
+    {
+        $manager = $this->app->make(DumpCaptureManager::class);
+
+        $captured = [];
+
+        $manager->register(new class($captured) implements DataDumperInterface {
+            /**
+             * @param array<int, mixed> $captured
+             */
+            public function __construct(private array &$captured)
+            {
+            }
+
+            public function dump(Data $data): void
+            {
+                $this->captured[] = $data->getValue(true);
+            }
+        });
+
+        laler_show_queries();
+
+        /** @var ConnectionInterface $connection */
+        $connection = $this->app->make('db')->connection();
+
+        $event = new QueryExecuted('select * from users where email = ?', ['john@example.com'], 19.9, $connection);
+
+        $this->app['events']->dispatch($event);
+
+        laler_stop_showing_queries();
+
+        self::assertNotEmpty($captured);
+
+        $payload = $captured[0];
+
+        self::assertSame('select * from users where email = ?', $payload['sql']);
+        self::assertSame(['john@example.com'], $payload['bindings']);
+        self::assertSame(19.9, $payload['time_ms']);
+        self::assertSame($event->connectionName, $payload['connection']);
     }
 
 }

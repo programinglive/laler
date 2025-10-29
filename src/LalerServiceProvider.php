@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Laler;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\ServiceProvider;
 use Laler\Dumpers\BrowserConsoleDumper;
 use Laler\Http\Middleware\InjectBrowserConsoleLogs;
 use Laler\Support\BrowserConsoleRecorder;
+use Laler\Support\Laravel\QueryWatcher;
 
 class LalerServiceProvider extends ServiceProvider
 {
@@ -34,6 +37,15 @@ class LalerServiceProvider extends ServiceProvider
 
             return $manager;
         });
+
+        if (class_exists(QueryExecuted::class)) {
+            $this->app->singleton(QueryWatcher::class, static function (Application $app) {
+                return new QueryWatcher(
+                    $app->make(Dispatcher::class),
+                    $app->make(DumpCaptureManager::class)
+                );
+            });
+        }
     }
 
     /**
@@ -41,7 +53,7 @@ class LalerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        /** @var HttpKernelContract $kernel */
+        /** @var object $kernel */
         $kernel = $this->app->make(HttpKernelContract::class);
 
         if (method_exists($kernel, 'pushMiddleware')) {

@@ -3,19 +3,21 @@
   "version": "1.0.6",
   "description": "Capture PHP dumps and route them to configurable channels. Works with or without Laravel.",
   "scripts": {
-    "release": "standard-version",
-    "release:minor": "standard-version --release-as minor",
-    "release:major": "standard-version --release-as major",
-    "release:patch": "standard-version --release-as patch",
-    "commit": "git-cz"
+    "release": "node scripts/release.js",
+    "release:minor": "node scripts/release.js minor",
+    "release:major": "node scripts/release.js major",
+    "release:patch": "node scripts/release.js patch",
+    "commit": "git-cz",
+    "test": "echo \"No tests specified\"",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "standard-version": "^9.5.0",
+    "@commitlint/cli": "^18.6.1",
+    "@commitlint/config-conventional": "^18.6.3",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
-    "@commitlint/cli": "^18.4.3",
-    "@commitlint/config-conventional": "^18.4.3",
-    "husky": "^8.0.3"
+    "husky": "^8.0.3",
+    "standard-version": "^9.5.0"
   },
   "config": {
     "commitizen": {
@@ -23,9 +25,53 @@
     }
   },
   "standard-version": {
-    "scripts": {
-      "postchangelog": "git add CHANGELOG.md"
-    }
+    "releaseCommitMessageFormat": "chore(release): {{currentTag}} 🚀",
+    "types": [
+      {
+        "type": "feat",
+        "section": "✨ Features"
+      },
+      {
+        "type": "fix",
+        "section": "🐛 Bug Fixes"
+      },
+      {
+        "type": "perf",
+        "section": "⚡ Performance"
+      },
+      {
+        "type": "refactor",
+        "section": "♻️ Refactors"
+      },
+      {
+        "type": "docs",
+        "section": "📝 Documentation"
+      },
+      {
+        "type": "style",
+        "section": "💄 Styles"
+      },
+      {
+        "type": "test",
+        "section": "✅ Tests"
+      },
+      {
+        "type": "build",
+        "section": "🏗️ Build System"
+      },
+      {
+        "type": "ci",
+        "section": "👷 Continuous Integration"
+      },
+      {
+        "type": "chore",
+        "section": "🧹 Chores"
+      },
+      {
+        "type": "revert",
+        "section": "⏪ Reverts"
+      }
+    ]
   },
   "repository": {
     "type": "git",
@@ -39,5 +85,9 @@
     "debugging"
   ],
   "author": "programinglive",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@programinglive/commiter": "^1.1.0",
+    "@programinglive/dev-workflow-mcp-server": "^1.1.7"
+  }
 }

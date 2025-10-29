@@ -23,3 +23,5 @@ Thumbs.db
 /reports/
 *.log
 .phpunit.cache/
+/.workflow-state.json
+/test.sqlite

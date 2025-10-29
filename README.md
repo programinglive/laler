@@ -1,5 +1,11 @@
 # Laler
 
+[![Latest Version](https://img.shields.io/packagist/v/laler/laler.svg?label=packagist)](https://packagist.org/packages/laler/laler)
+[![Total Downloads](https://img.shields.io/packagist/dt/laler/laler.svg)](https://packagist.org/packages/laler/laler/stats)
+[![PHP Version Support](https://img.shields.io/packagist/php-v/laler/laler.svg)](https://packagist.org/packages/laler/laler)
+[![License](https://img.shields.io/packagist/l/laler/laler.svg)](LICENSE)
+[![Commits: Commiter](https://img.shields.io/badge/commits-commiter%20enforced-7b61ff.svg)](https://www.npmjs.com/package/@programinglive/commiter)
+
 Capture PHP `VarDumper` output and redirect it to any channel you control. Works with or without Laravel.
 
 ## Table of Contents
@@ -36,6 +42,7 @@ Capture PHP `VarDumper` output and redirect it to any channel you control. Works
 - Laravel (Illuminate components) ^9.0 || ^12.0
 
 ## Installation
+
 ```bash
 composer require laler/laler
 composer install
@@ -142,6 +149,22 @@ if (app()->environment('local')) {
 laler('Hello from Laler!'); // Routed to the Tauri desktop app
 ```
 
+#### Capturing Database Queries
+
+Enable automatic forwarding of executed queries to your configured dumpers:
+
+```php
+// Start listening for queries (typically in a tinker session or controller)
+laler_show_queries();
+
+User::firstWhere('email', 'john@example.com');
+
+// Stop when you're done
+laler_stop_showing_queries();
+```
+
+Each query is sent as an array with the SQL, bindings, execution time (ms), and connection name, so dumpers like the desktop app can display them clearly.
+
 ### Plain PHP Usage
 For projects without Laravel, use the global helper functions. Here's the complete example from `examples/plain_php_usage.php`:
 
@@ -217,6 +240,8 @@ npm run release:major   # 1.0.1 -> 2.0.0
 ## Contributing
 - **Commit format:** Use conventional commits (`feat:`, `fix:`, `docs:`, etc.)
 - **Interactive commits:** Run `npm run commit` for guided commit creation
+- **Commit tooling:** `@programinglive/commiter` manages Husky/commitlint hooks—run `npx @programinglive/commiter` after cloning if hooks are missing
+- **Release scripts:** Use `npm run release[:patch|:minor|:major]` to produce semantic, icon-rich changelogs
 - Follow the existing code style
 - Remove unused imports before committing
 - Run tests before submitting
